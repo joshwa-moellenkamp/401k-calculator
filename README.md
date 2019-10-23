@@ -1,3 +1,7 @@
+# 401k Calculator
+
+This project is inteded to provide a real-time tool to enable users to visualize the properties of compounding interest as it relates to 401k (or other savings accounts) contributions. Boilerplate readme information is included below.
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
