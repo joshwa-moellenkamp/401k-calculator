@@ -16,12 +16,17 @@ class App extends React.Component {
     this.setState({ interestRate: parseFloat(event.target.value) });
   };
 
+  handleYearsChange = event => {
+    this.setState({ years: parseFloat(event.target.value) });
+  };
+
   render() {
     return (
       <div className="App">
         <Calculator
           handleContributionChange={this.handleContributionChange}
           handleInterestRateChange={this.handleInterestRateChange}
+          handleYearsChange={this.handleYearsChange}
           interestRate={this.state.interestRate}
           years={this.state.years}
         />
@@ -34,7 +39,7 @@ class App extends React.Component {
         <Display
           contribution={this.state.contribution}
           interestRate={this.state.interestRate}
-          years={10}
+          years={this.state.years}
         />
       </div>
     );
@@ -86,6 +91,15 @@ function Calculator(props) {
           type="number"
           onChange={props.handleInterestRateChange}
           value={props.interestRate}
+        />
+      </label>
+      <p />
+      <label>
+        Years
+        <input
+          type="number"
+          onChange={props.handleYearsChange}
+          value={props.years}
         />
       </label>
     </div>
