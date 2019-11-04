@@ -1,24 +1,90 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import "./App.css";
 
-function App() {
+class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.handleContributionChange = this.handleContributionChange.bind(this);
+    this.state = { contribution: 0, interestRate: 7, years: 10, balance: 0 };
+  }
+
+  handleContributionChange = event => {
+    this.setState({ contribution: parseFloat(event.target.value) });
+  };
+
+  handleInterestRateChange = event => {
+    this.setState({ interestRate: parseFloat(event.target.value) });
+  };
+
+  render() {
+    return (
+      <div className="App">
+        <Calculator
+          handleContributionChange={this.handleContributionChange}
+          handleInterestRateChange={this.handleInterestRateChange}
+          interestRate={this.state.interestRate}
+          years={this.state.years}
+        />
+        <Calculate
+          contribution={this.state.contribution}
+          interestRate={this.state.interestRate}
+          years={this.state.years}
+          balance={this.state.balance}
+        />
+        <Display
+          contribution={this.state.contribution}
+          interestRate={this.state.interestRate}
+          years={10}
+        />
+      </div>
+    );
+  }
+}
+
+function Calculate(props) {
+  let i;
+  let balance = props.balance;
+  for(i = 1; i <= props.years; i++) {
+    const interest = props.balance * (1 + (.01 * props.interestRate));
+    balance = balance + interest + props.contribution;
+    console.log(balance);
+  }
+
+  return(
+    <h1>Balance: {balance}</h1>
+  );
+}
+
+function Display(props) {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <h2>Contribution: {props.contribution}</h2>
+      <h2>Interest Rate: {props.interestRate}%</h2>
+      <h2>Years: {props.years}</h2>
+    </div>
+  );
+}
+
+function Calculator(props) {
+  return (
+    <div>
+      <label>
+        Contribution (Yearly)
+        <input
+          type="number"
+          onChange={props.handleContributionChange}
+          value={props.contribution}
+        />
+      </label>
+      <p />
+      <label>
+        Interest Percentage (Compounded Yearly)
+        <input
+          type="number"
+          onChange={props.handleInterestRateChange}
+          value={props.interestRate}
+        />
+      </label>
     </div>
   );
 }
