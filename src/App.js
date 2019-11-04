@@ -5,7 +5,7 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.handleContributionChange = this.handleContributionChange.bind(this);
-    this.state = { contribution: 0, interestRate: 7, years: 10, balance: 0 };
+    this.state = { contribution: 0.0, interestRate: 7.0, years: 10, balance: 0.0 };
   }
 
   handleContributionChange = event => {
@@ -45,22 +45,25 @@ function Calculate(props) {
   let i;
   let balance = props.balance;
   for(i = 1; i <= props.years; i++) {
-    const interest = props.balance * (1 + (.01 * props.interestRate));
+    const interest = balance * (.01 * props.interestRate);
     balance = balance + interest + props.contribution;
-    console.log(balance);
   }
 
   return(
-    <h1>Balance: {balance}</h1>
+    <h1>Balance: {StyleCurrency(balance)}</h1>
   );
+}
+
+function StyleCurrency(value) {
+  return value.toLocaleString(undefined, {style: "currency", currency: "USD", minimumFractionDigits: 2, maximumFractionDigits:2})
 }
 
 function Display(props) {
   return (
     <div>
-      <h2>Contribution: {props.contribution}</h2>
-      <h2>Interest Rate: {props.interestRate}%</h2>
-      <h2>Years: {props.years}</h2>
+      <h5>Contribution: {StyleCurrency(props.contribution)}</h5>
+      <h5>Interest Rate: {props.interestRate}%</h5>
+      <h5>Years: {props.years}</h5>
     </div>
   );
 }
