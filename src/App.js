@@ -1,25 +1,29 @@
 import React from "react";
 import "./App.css";
-import Table from '@material-ui/core/Table';
-import TableRow from '@material-ui/core/TableRow';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
+import Table from "@material-ui/core/Table";
+import TableRow from "@material-ui/core/TableRow";
+import TableBody from "@material-ui/core/TableBody";
+import TableCell from "@material-ui/core/TableCell";
+import TableHead from "@material-ui/core/TableHead";
 
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.handleContributionChange = this.handleContributionChange.bind(this);
     this.state = {
-      contribution: 0.0,
+      employeeContribution: 0.0,
+      employerContribution: 0.0,
       interestRate: 7.0,
       years: 10,
       balance: 0.0
     };
   }
 
-  handleContributionChange = event => {
-    this.setState({ contribution: parseFloat(event.target.value) });
+  handleEmployeeContributionChange = event => {
+    this.setState({ employeeContribution: parseFloat(event.target.value) });
+  };
+
+  handleEmployerContributionChange = event => {
+    this.setState({ employerContribution: parseFloat(event.target.value) });
   };
 
   handleInterestRateChange = event => {
@@ -40,14 +44,20 @@ class App extends React.Component {
           financial independence.
         </p>
         <Calculator
-          handleContributionChange={this.handleContributionChange}
+          handleEmployeeContributionChange={
+            this.handleEmployeeContributionChange
+          }
+          handleEmployerContributionChange={
+            this.handleEmployerContributionChange
+          }
           handleInterestRateChange={this.handleInterestRateChange}
           handleYearsChange={this.handleYearsChange}
           interestRate={this.state.interestRate}
           years={this.state.years}
         />
         <Calculate
-          contribution={this.state.contribution}
+          employeeContribution={this.state.employeeContribution}
+          employerContribution={this.state.employerContribution}
           interestRate={this.state.interestRate}
           years={this.state.years}
           balance={this.state.balance}
@@ -63,47 +73,73 @@ class App extends React.Component {
 }
 
 function Calculate(props) {
+  let data = [];
+  let totalEmployeeContribution = 0.0;
+  let totalEmployerContribution = 0.0;
+  let totalInterest = 0.0;
+
   let i;
   let balance = props.balance;
   for (i = 1; i <= props.years; i++) {
     const interest = balance * (0.01 * props.interestRate);
-    balance = balance + interest + props.contribution;
+    balance =
+      balance +
+      interest +
+      props.employeeContribution +
+      props.employerContribution;
+
+    // collect data for table display
+    totalEmployeeContribution =
+      totalEmployeeContribution + props.employeeContribution;
+    totalEmployerContribution =
+      totalEmployerContribution + props.employerContribution;
+    totalInterest = totalInterest + interest;
+
+    let dataEntry = {};
+    dataEntry.key = i;
+    dataEntry.employeeContribution = props.employeeContribution;
+    dataEntry.employerContribution = props.employerContribution;
+    dataEntry.totalEmployeeContribution = totalEmployeeContribution;
+    dataEntry.totalEmployerContribution = totalEmployerContribution;
+    dataEntry.totalInterest = totalInterest;
+    dataEntry.balance = dataEntry.balance || 0 + balance;
+    data.push(dataEntry);
   }
 
   return (
     <div>
       <h3>Balance: {StyleCurrency(balance)}</h3>
 
-      {/* <Table style={{ tableLayout: "auto" }}>
+      <Table style={{ tableLayout: "auto" }}>
         <TableHead>
           <TableRow>
             <TableCell>Year</TableCell>
-            <TableCell>Total Contribution</TableCell>
+            <TableCell>Total Employee Contribution</TableCell>
+            <TableCell>Total Employer Contribution</TableCell>
             <TableCell>Total Interest Earned</TableCell>
             <TableCell>Total Balance</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {items.map((item) => (
-            <TableRow key={item}>
-              <TableCell>
-                <GreenButton variant="contained" onClick={(e) => challengeCompleted(item)}>
-                  Complete
-                </GreenButton>
+          {data.map(dataEntry => (
+            <TableRow key={dataEntry.key}>
+              <TableCell>{dataEntry.key}</TableCell>
+              <TableCell align="right">
+                {StyleCurrency(dataEntry.totalEmployeeContribution)}
               </TableCell>
-              <TableCell>
-                {item}
+              <TableCell align="right">
+                {StyleCurrency(dataEntry.totalEmployerContribution)}
               </TableCell>
-              <TableCell>
-                {challenges.get(item).points}
+              <TableCell align="right">
+                {StyleCurrency(dataEntry.totalInterest)}
               </TableCell>
-              <TableCell>
-                {challenges.get(item).description}
+              <TableCell align="right">
+                {StyleCurrency(dataEntry.balance)}
               </TableCell>
             </TableRow>
           ))}
         </TableBody>
-      </Table> */}
+      </Table>
     </div>
   );
 }
@@ -134,19 +170,31 @@ function Calculator(props) {
         <TableHead>
           <TableRow>
             <TableCell style={{ width: "50%", border: "none" }}></TableCell>
-            <TableCell style={{ width: "50%", border: "none"}}></TableCell>
+            <TableCell style={{ width: "50%", border: "none" }}></TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           <TableRow>
             <TableCell align="right" style={{ border: "none" }}>
-              <label>Contribution (Yearly)</label>
+              <label>Employee Contribution (Yearly)</label>
             </TableCell>
             <TableCell style={{ border: "none" }}>
               <input
                 type="number"
-                onChange={props.handleContributionChange}
-                value={props.contribution}
+                onChange={props.handleEmployeeContributionChange}
+                value={props.employeeContribution}
+              />
+            </TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell align="right" style={{ border: "none" }}>
+              <label>Employer Contribution (Yearly)</label>
+            </TableCell>
+            <TableCell style={{ border: "none" }}>
+              <input
+                type="number"
+                onChange={props.handleEmployerContributionChange}
+                value={props.employerContribution}
               />
             </TableCell>
           </TableRow>
