@@ -10,6 +10,7 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      initialBalance: 0.0,
       employeeContribution: 0.0,
       employerContribution: 0.0,
       interestRate: 7.0,
@@ -17,6 +18,10 @@ class App extends React.Component {
       balance: 0.0
     };
   }
+
+  handleInitialBalanceChange = event => {
+    this.setState({ initialBalance: parseFloat(event.target.value) });
+  };
 
   handleEmployeeContributionChange = event => {
     this.setState({ employeeContribution: parseFloat(event.target.value) });
@@ -44,6 +49,9 @@ class App extends React.Component {
           financial independence.
         </p>
         <Calculator
+          handleInitialBalanceChange={
+            this.handleInitialBalanceChange
+          }
           handleEmployeeContributionChange={
             this.handleEmployeeContributionChange
           }
@@ -60,7 +68,7 @@ class App extends React.Component {
           employerContribution={this.state.employerContribution}
           interestRate={this.state.interestRate}
           years={this.state.years}
-          balance={this.state.balance}
+          initialBalance={this.state.initialBalance}
         />
         {/* <Display
           contribution={this.state.contribution}
@@ -79,7 +87,7 @@ function Calculate(props) {
   let totalInterest = 0.0;
 
   let i;
-  let balance = props.balance;
+  let balance = props.initialBalance;
   for (i = 1; i <= props.years; i++) {
     const interest = balance * (0.01 * props.interestRate);
     balance =
@@ -145,12 +153,17 @@ function Calculate(props) {
 }
 
 function StyleCurrency(value) {
-  return value.toLocaleString(undefined, {
-    style: "currency",
-    currency: "USD",
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2
-  });
+  if(isNaN(value)) {
+    return "";
+  }
+  else {
+    return value.toLocaleString(undefined, {
+      style: "currency",
+      currency: "USD",
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    })
+  }
 }
 
 function Display(props) {
@@ -174,6 +187,17 @@ function Calculator(props) {
           </TableRow>
         </TableHead>
         <TableBody>
+          <TableRow>
+            <TableCell align="right" style={{ border: "none" }}>
+              <label>Initial Balance</label>
+            </TableCell>
+            <TableCell style={{ border: "none" }}>
+              <input
+                type="number"
+                onChange={props.handleInitialBalanceChange}
+              />
+            </TableCell>
+          </TableRow>
           <TableRow>
             <TableCell align="right" style={{ border: "none" }}>
               <label>Employee Contribution (Yearly)</label>
