@@ -153,16 +153,15 @@ function Calculate(props) {
 }
 
 function StyleCurrency(value) {
-  if(isNaN(value)) {
+  if (isNaN(value)) {
     return "";
-  }
-  else {
+  } else {
     return value.toLocaleString(undefined, {
       style: "currency",
       currency: "USD",
       minimumFractionDigits: 2,
       maximumFractionDigits: 2
-    })
+    });
   }
 }
 
